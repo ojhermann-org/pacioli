@@ -1,0 +1,4 @@
+# Shared, version-controlled direnv setup. The machine-local `.envrc` sources
+# this file. Entering the directory loads the Nix dev shell, which provides the
+# toolchain (elan → Lean via lean-toolchain) and installs the git hooks.
+use flake
