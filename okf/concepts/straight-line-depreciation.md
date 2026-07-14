@@ -49,6 +49,10 @@ expense and records the postings —
 to end: the judgment picks `expense`; `Ledger.totalBalance_post` proves the
 books stay balanced regardless of the value chosen.
 
+For how this `expense` data crosses the seam into the verified kernel — with the
+type stack and the fundamental invariant it lands on — see the
+[architecture overview](../../docs/architecture.md).
+
 ## Notes and edge cases (judgment, not mechanics)
 
 - Changes in estimate (useful life, residual) are applied prospectively, not

@@ -13,8 +13,12 @@ that is inherently "it depends" — policy, timing, classification — and canno
 
 A concept's job is to explain *what* the accounting inputs should be and *why*,
 and to produce **data** (an amount, a schedule, a classification) that the
-verified kernel in `Pacioli/` then consumes deterministically. Policy lives here;
-mechanics live in Lean; neither leaks into the other.
+verified kernel in `Pacioli/` then consumes deterministically. Policy lives
+here; mechanics live in Lean; neither leaks into the other.
+
+For how this bundle relates to the Lean kernel — the interface contract, the
+type stack, and the end-to-end handshake — see the
+[architecture overview](../docs/architecture.md).
 
 ## Concepts
 
