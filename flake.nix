@@ -55,7 +55,13 @@
             markdownlint = {
               enable = true;
               settings.configuration = {
-                MD013 = false; # line length — prose wraps freely
+                MD013 = {
+                  # line length — prose wraps at 80 for terminal review; tables
+                  # and code blocks (ASCII trees) can't reflow, so exempt them.
+                  line_length = 80;
+                  tables = false;
+                  code_blocks = false;
+                };
                 MD033 = false; # inline HTML
                 MD036 = false; # emphasis-as-heading — prose uses emphasis stylistically
                 MD040 = false; # fenced code language not required (ASCII trees)
