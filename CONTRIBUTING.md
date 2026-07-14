@@ -104,6 +104,15 @@ source of truth.
 Both CI jobs are **required status checks** on `main`: a red build — a failing
 proof, a stray `sorry`, or a lint error — blocks the merge.
 
+### Repository settings as code
+
+This repo governs its own merge policy — the required checks, owner review,
+conversation resolution, and merge queue — as a version-controlled **GitHub
+ruleset** in [`.github/rulesets/main.json`](.github/rulesets/main.json).
+Maintainers reconcile it with [`scripts/settings.sh`](scripts/settings.sh)
+(`--check` to diff live vs. committed, `--apply` to push it). Org-wide rules
+are managed separately in tofu; these two layers compose.
+
 ### House style
 
 - **Markdown** wraps prose at **80 columns** (`MD013`); tables and code/Mermaid
