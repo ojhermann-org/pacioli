@@ -37,17 +37,17 @@ asset is available for use and continues over its useful life; the *method* and
 
 ## Output handed to the kernel
 
-This concept produces a **schedule**: a per-period `expense` amount (plain data).
-It does not post anything itself. The verified kernel takes each period's expense
-and records the postings —
+This concept produces a **schedule**: a per-period `expense` amount (plain
+data). It does not post anything itself. The verified kernel takes each period's
+expense and records the postings —
 
 - **debit** Depreciation Expense
 - **credit** Accumulated Depreciation
 
 — and *guarantees* they balance. See `examples/Examples.lean`
 (`depreciationEntries` / `depreciationTxn`), where this handshake is checked end
-to end: the judgment picks `expense`; `Ledger.totalBalance_post` proves the books
-stay balanced regardless of the value chosen.
+to end: the judgment picks `expense`; `Ledger.totalBalance_post` proves the
+books stay balanced regardless of the value chosen.
 
 ## Notes and edge cases (judgment, not mechanics)
 

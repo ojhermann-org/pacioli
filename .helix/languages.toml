@@ -1,0 +1,47 @@
+# Project-local Helix config for Pacioli. Merges over your global
+# ~/.config/helix. It mirrors the toolchain that `flake.nix` enforces in its
+# pre-commit checks / CI, so the editor and the checks agree:
+#
+#   nix       nixfmt (nixfmt-rfc-style) + nixd   — matches the nixfmt/deadnix/statix hooks
+#   lean      Lean 4 server via `lake serve`     — the kernel language
+#   markdown  marksman, wrapped at 80            — matches markdownlint MD013 (line_length = 80)
+#   toml      taplo                              — lakefile / lake-manifest formatting
+#
+# `lake` (and the Lean server) come from the flake devShell, so open Helix from
+# inside the direnv-activated repo (`nix develop`) for the Lean LSP to start.
+
+# A Lake project's server is `lake serve` (sets the module search path), not a
+# bare `lean --server`.
+[language-server.lean]
+command = "lake"
+args = ["serve"]
+
+[[language]]
+name = "nix"
+auto-format = true
+language-servers = ["nixd"]
+
+[language.formatter]
+command = "nixfmt"
+
+[[language]]
+name = "lean"
+language-servers = ["lean"]
+rulers = [100]              # mathlib convention; not enforced by the checks, just a guide
+
+[[language]]
+name = "markdown"
+# markdownlint (MD013) is the gate for markdown here, not a formatter, so don't
+# auto-run prettier on save — reflow to 80 by hand with `:reflow`.
+auto-format = false
+text-width = 80
+rulers = [80]
+language-servers = ["marksman"]
+
+[[language]]
+name = "toml"
+auto-format = true
+
+[language.formatter]
+command = "taplo"
+args = ["fmt", "-"]

@@ -7,10 +7,9 @@ description: Curated accounting judgment that guides the inputs the Lean kernel 
 # Pacioli knowledge bundle
 
 This is the *judgment* half of Pacioli, expressed in the
-[Open Knowledge Format](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md).
-Each concept captures accounting reasoning that is inherently "it depends" —
-policy, timing, classification — and cannot (or should not) be frozen into the
-Lean kernel's types.
+[Open Knowledge Format][okf-spec]. Each concept captures accounting reasoning
+that is inherently "it depends" — policy, timing, classification — and cannot
+(or should not) be frozen into the Lean kernel's types.
 
 A concept's job is to explain *what* the accounting inputs should be and *why*,
 and to produce **data** (an amount, a schedule, a classification) that the
@@ -19,5 +18,7 @@ mechanics live in Lean; neither leaks into the other.
 
 ## Concepts
 
-- [Straight-line depreciation](concepts/straight-line-depreciation.md) — spread a
-  depreciable asset's cost evenly over its useful life.
+- [Straight-line depreciation](concepts/straight-line-depreciation.md) — spread
+  a depreciable asset's cost evenly over its useful life.
+
+[okf-spec]: https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md

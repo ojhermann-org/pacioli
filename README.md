@@ -1,6 +1,7 @@
 # Pacioli
 
-_A verified core of accounting mechanics, paired with curated accounting judgment._
+_A verified core of accounting mechanics, paired with curated accounting
+judgment._
 
 This repository splits accounting into two cleanly isolated layers:
 
@@ -25,7 +26,8 @@ policies. Forcing these fluid rules into a strict type system creates brittle
 code that secretly hardcodes compliance policy, causing it to rot the moment an
 accounting standard changes.
 
-So the seam we cut on is a single question: **can this be made total and mechanical?**
+So the seam we cut on is a single question: **can this be made total and
+mechanical?**
 
 |              | Yes: the mechanics in Lean                                                                                | No: the judgement belongs in **OKF**                                                                              |
 | ------------ | --------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
@@ -64,14 +66,15 @@ _that the mechanics are sound_.
 
 ## Mathematical foundation
 
-The Lean kernel is built on [David Ellerman](https://www.ellerman.org/?s=accounting)'s
-group-theoretic formulation of double-entry bookkeeping rather than an ad-hoc
-algebra of our own.
+The Lean kernel is built on
+[David Ellerman](https://www.ellerman.org/?s=accounting)'s group-theoretic
+formulation of double-entry bookkeeping rather than an ad-hoc algebra of our
+own.
 
 Double-entry implicitly uses the **group of differences** — the "**Pacioli
-group**" — constructed from ordered pairs of non-negative numbers. A **T-account
-is exactly such an ordered pair** `(debit, credit)`, and equality in the group is
-the equivalence `(d, c) ≡ (d', c') ⟺ d + c' = d' + c`.
+group**" — constructed from ordered pairs of non-negative numbers. A
+**T-account is exactly such an ordered pair** `(debit, credit)`, and equality
+in the group is the equivalence `(d, c) ≡ (d', c') ⟺ d + c' = d' + c`.
 
 This gives us a rigorous, citable base where:
 
@@ -99,27 +102,29 @@ Ellerman 1982).
    doubt, judgment goes to OKF, mechanics to Lean.
 4. **Determinism at the boundary.** Everything Lean touches is a total function
    of explicit data inputs. No hidden policy, no I/O, no ambiguity.
-5. **Everything is citable.** Lean invariants trace to their mathematical source;
-   OKF concepts trace to the standard or literature that justifies them.
+5. **Everything is citable.** Lean invariants trace to their mathematical
+   source; OKF concepts trace to the standard or literature that justifies them.
 
 ---
 
 ## Toolchain rationale
 
-**[Lean 4](https://lean-lang.org/)** was chosen over other dependently typed / verification languages
-because it uniquely combines: real dependent types, a growing and well-supported
-ecosystem (mathlib, active community), a genuine programming language that also
-proves theorems, and compilation to a portable binary. The nearest serious
-alternative for "verified software" alone is **F\*/Dafny** (SMT-backed refinement
-types, often more ergonomic for pure verification), but this project's value
-includes being a _citable formalization adjacent to mathematics_, where Lean's
-community gravity and proof culture win.
+**[Lean 4](https://lean-lang.org/)** was chosen over other dependently typed /
+verification languages because it uniquely combines: real dependent types, a
+growing and well-supported ecosystem (mathlib, active community), a genuine
+programming language that also proves theorems, and compilation to a portable
+binary. The nearest serious alternative for "verified software" alone is
+**F\*/Dafny** (SMT-backed refinement types, often more ergonomic for pure
+verification), but this project's value includes being a _citable formalization
+adjacent to mathematics_, where Lean's community gravity and proof culture win.
 
-**OKF** ([Google Cloud, June 2026](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)) was chosen because it is a vendor-neutral,
-git-shippable standard — a directory of markdown files with YAML frontmatter, one
-concept per file — that is already structurally aligned with how coding agents
-store curated memory. That alignment means the judgment half is natively
-readable by the agents that will consume it.
+**OKF** ([Google Cloud, June 2026][okf-spec]) was chosen because it is a
+vendor-neutral, git-shippable standard — a directory of markdown files with YAML
+frontmatter, one concept per file — that is already structurally aligned with
+how coding agents store curated memory. That alignment means the judgment half
+is natively readable by the agents that will consume it.
+
+[okf-spec]: https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md
 
 ---
 
@@ -156,15 +161,15 @@ This repository is built for **agent–human collaboration**. The expected loop:
 - A **human brings an input** — an idea from accounting literature, a new
   standard, a policy question, a worked example.
 - An **agent is responsible for updating the repository** — deciding whether the
-  input is _mechanical_ (a new Lean invariant in `Pacioli/`) or _judgment_ (a new
-  OKF concept in `okf/`), never both, and making that change while keeping the
-  two halves and the interface between them clean.
+  input is _mechanical_ (a new Lean invariant in `Pacioli/`) or _judgment_ (a
+  new OKF concept in `okf/`), never both, and making that change while keeping
+  the two halves and the interface between them clean.
 - The **OKF bundle** then tells humans and agents _what_ the accounting inputs
   should be and _why_; the **Lean kernel** guarantees that, given those inputs,
   the mechanics are correct — by construction and by proof.
 
-Humans can, of course, edit `Pacioli/` and `okf/` directly. But the repository is
-designed around the agent–human loop: the human supplies intent and judgment,
+Humans can, of course, edit `Pacioli/` and `okf/` directly. But the repository
+is designed around the agent–human loop: the human supplies intent and judgment,
 and the agent translates it into verified mechanics and curated knowledge.
 
 ---
