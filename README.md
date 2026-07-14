@@ -2,7 +2,7 @@
 
 _A verified core of accounting mechanics, paired with curated accounting judgment._
 
-This repository is an experiment in splitting accounting into two cleanly
+This repository is an experiment in splitting accounting into cleanly
 separated halves and giving each the tool it deserves:
 
 - **The mechanics** — the parts of accounting that are _total_ and _mechanical_
