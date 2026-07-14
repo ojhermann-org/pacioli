@@ -40,6 +40,19 @@
               exit "$status"
             '';
           };
+          # The full Lean compile, run as a pre-push gate (not in flake check —
+          # elan/Lake need network the check sandbox denies). elan resolves the
+          # toolchain from `lean-toolchain` and puts `lake` on PATH; `cache get`
+          # pulls mathlib's prebuilt oleans so the push isn't a from-scratch
+          # build. Both libraries are named so `Examples` is compiled too.
+          lakeBuild = pkgs.writeShellApplication {
+            name = "lake-build";
+            runtimeInputs = [ pkgs.elan ];
+            text = ''
+              lake exe cache get
+              lake build Pacioli Examples
+            '';
+          };
         in
         git-hooks.lib.${system}.run {
           src = ./.;
@@ -75,6 +88,15 @@
               files = "\\.lean$";
               language = "system";
               pass_filenames = true;
+            };
+            lake-build = {
+              enable = true;
+              name = "lake build (full Lean compile)";
+              entry = "${lakeBuild}/bin/lake-build";
+              language = "system";
+              stages = [ "pre-push" ];
+              pass_filenames = false;
+              always_run = true;
             };
           };
         };
