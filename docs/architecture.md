@@ -215,7 +215,7 @@ sequenceDiagram
     Kernel->>Kernel: depreciationEntries_balanced ⊢ sum = 0
     Kernel->>Kernel: depreciationTxn = entries + that proof
     Kernel->>Kernel: Ledger.post + totalBalance_post ⊢ books stay balanced
-    Note over OKF,Kernel: judgment chose the number; the kernel proved the mechanics
+    Note over OKF,Kernel: judgment chose the number — the kernel proved the mechanics
 ```
 
 The final `example` in that file discharges the goal directly with
