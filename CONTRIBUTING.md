@@ -126,8 +126,16 @@ Everything lands through a **pull request** — no direct commits to `main`.
 3. Keep it **small and well-explained**; the commit message and PR should say
    _why_, not just _what_.
 4. Ensure `nix develop` + `lake build` is green locally.
-5. Open a PR. Both CI jobs must pass before it can merge.
-6. Merge is **squash → delete branch**, keeping history linear.
+5. **Open a PR.** For it to become mergeable:
+   - both CI checks — **`nix flake check`** and **`lake build`** — pass;
+   - the repository owner (**@ojhermann**) has **approved** — they are requested
+     as a reviewer automatically (via [`CODEOWNERS`](.github/CODEOWNERS)), so you
+     needn't add them by hand;
+   - **every review conversation is resolved.**
+6. **Only the owner merges.** Approved, green PRs go through a **merge queue**:
+   the PR is re-tested against the latest `main` before it lands, so a merge can
+   never break `main`. Merges are **squash → delete branch**, keeping history
+   linear.
 
 ---
 
