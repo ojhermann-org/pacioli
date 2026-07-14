@@ -140,11 +140,16 @@ is natively readable by the agents that will consume it.
 ├── lake-manifest.json   # dependency lock — Reservoir requires this at the repo root
 ├── Pacioli.lean         # library root (imports the modules below)
 ├── Pacioli/             # kernel: Pacioli group, T-accounts, postings, invariants
+├── docs/                # architecture & reference (start at architecture.md)
 ├── okf/                 # curated accounting judgment (OKF bundle)
 │   ├── index.md          # progressive-disclosure entry point
 │   └── concepts/         # one file per concept (policies, standards, playbooks)
 └── examples/            # worked slices crossing the boundary end-to-end
 ```
+
+For how these pieces fit together — the type stack, the `balance` homomorphism,
+the fundamental invariant, and the OKF → kernel handshake, with diagrams — see
+**[docs/architecture.md](docs/architecture.md)**.
 
 The Lean package sits at the repository **root** (not under a `lean/`
 subdirectory) so that `lake-manifest.json` lands at the top level, which
