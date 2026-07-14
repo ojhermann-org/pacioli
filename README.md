@@ -47,7 +47,7 @@ design:
 > → the Lean kernel
 > consumes those inputs **deterministically** and guarantees the mechanics.
 
-Worked example (SaaS revenue):
+Worked example:
 
 1. An OKF concept states: _"For SaaS contracts, recognize ratably over the
    service period per ASC 606."_ — this is the **judgment**, auditable in OKF.
@@ -96,8 +96,7 @@ Ellerman 1982).
    system so that an unbalanced transaction cannot even be _constructed_. This
    buys most of the safety for little proof effort.
 2. **Reserve full proofs for kernel invariants.** A handful of load-bearing
-   theorems (posting preserves the accounting equation; close is
-   sum-preserving), not one proof per rule. Avoid the proof-burden trap.
+   theorems, not one proof per rule.
 3. **Policy never leaks into types.** When in
    doubt, judgment goes to OKF, mechanics to Lean.
 4. **Determinism at the boundary.** Everything Lean touches is a total function
@@ -168,7 +167,7 @@ This repository is built for **agent–human collaboration**. The expected loop:
 - An **agent is responsible for updating the repository** — deciding whether the
   input is _mechanical_ (a new Lean invariant in `Pacioli/`) or _judgment_ (a
   new OKF concept in `okf/`), never both, and making that change while keeping
-  the two halves and the interface between them clean.
+  the halves and the interface between them clean.
 - The **OKF bundle** then tells humans and agents _what_ the accounting inputs
   should be and _why_; the **Lean kernel** guarantees that, given those inputs,
   the mechanics are correct — by construction and by proof.
