@@ -2,21 +2,14 @@
 
 _A verified core of accounting mechanics, paired with curated accounting judgment._
 
-This repository is an experiment in splitting accounting into cleanly
-separated halves and giving each the tool it deserves:
+This repository splits accounting into two cleanly isolated layers:
 
-- **The mechanics** — the parts of accounting that are _total_ and _mechanical_
-  (they either hold or they don't, with no judgment) are codified in **Lean 4**,
-  a dependently typed language, so that illegal states are unrepresentable and
-  the load-bearing invariants are _proven_, not merely tested.
-- **The judgment** — the parts that are inherently "it depends" (policy,
-  jurisdiction, timing, materiality, classification) are captured as curated
-  knowledge in the **Open Knowledge Format (OKF)**, so that agents and humans
-  share the same auditable reasoning.
+- **The mechanics**: deterministic mechanics are codified in _Lean 4_ so illegal states are mathematically unrepresentable and invariants are proven.
+- **The Judgment**: Contextual decisions (policy, jurisdiction, timing, materiality, and classification) are captured in the _Open Knowledge Format (OKF)_, allowing humans and AI agents to share the same auditable reasoning.
 
-**Lean guarantees that any given accounting inputs
+_Lean guarantees that any given accounting inputs
 are handled correctly; OKF guides the judgment about what those inputs should
-be.**
+be._
 
 ---
 
