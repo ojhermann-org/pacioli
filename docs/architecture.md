@@ -1,19 +1,17 @@
 # Pacioli architecture
 
-_What exists in Pacioli today, and how the pieces relate._
+_What exists in Pacioli and how the pieces relate._
 
-This document maps the current codebase — a small but complete demo — and the
-relationships between its parts. It is the **structural** companion to the
-[README](../README.md), which carries the _why_ (the mechanics/judgment split
-and its rationale). Per-definition detail lives in the Lean docstrings; this
-document explains how those definitions fit together.
+This document maps the current codebase and the relationships between its parts.
+It is the **structural** companion to the [README](../README.md), which carries
+the _why_. Per-definition detail lives in the Lean docstrings; this document
+explains how those definitions fit together.
 
-Everything below is present in the repository now. Where a line references a
-type or theorem, it exists in the file named beside it.
+Where a line references a type or theorem, it exists in the file named beside it.
 
 ---
 
-## The two halves
+## The halves
 
 Pacioli is split into a **mechanical core** (proven in Lean) and a **judgment
 bundle** (curated in OKF). They meet at exactly one seam: judgment produces
@@ -21,10 +19,10 @@ plain _data_, and the kernel consumes that data and proves the mechanics.
 
 ```mermaid
 graph LR
-    subgraph Judgment["Judgment — okf/ (it depends)"]
+    subgraph Judgment["Judgment — okf"]
         Concept["Concept<br/>(policy, standard)"]
     end
-    subgraph Mechanics["Mechanics — Pacioli/ (total, proven)"]
+    subgraph Mechanics["Mechanics — Pacioli"]
         Kernel["Lean kernel<br/>(types + theorems)"]
     end
     Concept -->|"produces plain data<br/>(amounts, schedules)"| Kernel
@@ -33,8 +31,7 @@ graph LR
 
 The rule that keeps the seam clean: **policy never leaks into Lean types.** If a
 Lean type could only be built by making a policy choice, that choice belongs in
-OKF instead. See the README's _interface contract_ section for the full
-statement.
+OKF instead.
 
 ---
 
