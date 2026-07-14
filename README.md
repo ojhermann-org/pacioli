@@ -4,8 +4,11 @@ _A verified core of accounting mechanics, paired with curated accounting judgmen
 
 This repository splits accounting into two cleanly isolated layers:
 
-- **The mechanics**: deterministic mechanics are codified in _Lean 4_ so illegal states are mathematically unrepresentable and invariants are proven.
-- **The Judgment**: Contextual decisions (policy, jurisdiction, timing, materiality, and classification) are captured in the _Open Knowledge Format (OKF)_, allowing humans and AI agents to share the same auditable reasoning.
+- **The mechanics**: deterministic mechanics are codified in _Lean 4_ so
+  illegal states are mathematically unrepresentable and invariants are proven.
+- **The Judgment**: Contextual decisions (policy, jurisdiction, timing,
+  materiality, and classification) are captured in the _Open Knowledge Format
+  (OKF)_, allowing humans and AI agents to share the same auditable reasoning.
 
 _Lean guarantees that any given accounting inputs
 are handled correctly; OKF guides the judgment about what those inputs should
@@ -15,18 +18,18 @@ be._
 
 ## Why this split
 
-Most attempts to "formalize accounting" stall because they try to _prove the
-judgment calls_. Revenue-recognition timing, impairment, fair-value estimates,
-GAAP-vs-IFRS classification — these are not theorems. They are policies that
-vary by jurisdiction and change over time. Forcing them into a type system
-produces brittle types that secretly encode policy and rot the moment a standard
-changes.
+Most attempts to formalize accounting fail because they try to prove judgment
+calls. Revenue recognition timing, impairment, fair-value estimates, and
+GAAP-vs-IFRS classifications are not mathematical theorems—they are shifting
+policies. Forcing these fluid rules into a strict type system creates brittle
+code that secretly hardcodes compliance policy, causing it to rot the moment an
+accounting standard changes.
 
 So the seam we cut on is a single question: **can this be made total and mechanical?**
 
-|              | Belongs in **Lean** (mechanics)                                                                           | Belongs in **OKF** (judgment)                                                                                     |
+|              | Yes: the mechanics in Lean                                                                                | No: the judgement belongs in **OKF**                                                                              |
 | ------------ | --------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| Nature       | Total functions, algebraic invariants                                                                     | Policy, "it depends", context                                                                                     |
+| Nature       | Total functions, algebraic invariants                                                                     | Policy, _"it depends"_, context                                                                                   |
 | Examples     | Double-entry balance, the accounting equation, aggregation/rollup, period close arithmetic, consolidation | Revenue recognition timing, depreciation policy choice, impairment triggers, materiality thresholds, GAAP vs IFRS |
 | Guarantee    | Machine-checked proof / uninhabited illegal states                                                        | Auditable, cited, human- and agent-readable reasoning                                                             |
 | Changes when | The _mathematics_ changes (rarely)                                                                        | A _standard or policy_ changes (often)                                                                            |
