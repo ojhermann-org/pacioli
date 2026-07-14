@@ -111,7 +111,10 @@ conversation resolution, and merge queue — as a version-controlled **GitHub
 ruleset** in [`.github/rulesets/main.json`](.github/rulesets/main.json).
 Maintainers reconcile it with [`scripts/settings.sh`](scripts/settings.sh)
 (`--check` to diff live vs. committed, `--apply` to push it). Org-wide rules
-are managed separately in tofu; these two layers compose.
+are managed separately in tofu; these two layers compose. Merging a maintainer's
+own PR (which can't be self-approved) uses
+[`scripts/merge.sh`](scripts/merge.sh) `<PR#>` — a ruleset-bypass squash-merge
+that `gh pr merge` cannot do.
 
 ### House style
 
