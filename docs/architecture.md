@@ -172,12 +172,34 @@ graph LR
 - **`totalBalance_post`** — posting a (balanced) transaction leaves the total
   balance _unchanged_ (the step).
 
-Together they give the **accounting equation by construction**: every ledger
-reachable from empty by posting balanced transactions has total balance `0`.
-Because `Transaction` cannot exist unless it is balanced, and `post` is the only
-way to grow a ledger, there is no reachable state in which the books do not
-balance — and it holds by proof, not by a runtime assertion.
-(`Pacioli/Ledger.lean`)
+Together they give the **trial balance identity by construction**: every ledger
+reachable from empty by posting balanced transactions has total balance `0` —
+equivalently, its total debits equal its total credits. Because `Transaction`
+cannot exist unless it is balanced, and `post` is the only way to grow a ledger,
+there is no reachable state in which the books do not balance — and it holds by
+proof, not by a runtime assertion. (`Pacioli/Ledger.lean`)
+
+### Why this is _not_ the accounting equation
+
+It is tempting to call `totalBalance = 0` the accounting equation. It is not,
+and the difference is exactly the seam this project cuts on.
+
+| | Statement | What it needs |
+| --- | --- | --- |
+| **Trial balance identity** | total debits = total credits | nothing but the postings — **proved today** |
+| **Accounting equation** | assets = liabilities + equity | every account **classified** — not stated today |
+
+`totalBalance` sums over _every_ entry indiscriminately. To even write `assets =
+liabilities + equity` you must first know which accounts are assets — and that
+is a _classification_, which the seam rule sends to judgment (`okf/`), not to a
+Lean type. So the accounting equation is not a stronger theorem the kernel has
+yet to prove; it is a statement the kernel currently **cannot express**, by
+design.
+
+When it does arrive it will arrive in the two pieces the seam predicts: an OKF
+concept supplying the classification as plain data, and a mechanical theorem
+that any _partition_ of the accounts has part-sums totalling `0`. The identity
+above is the one-part case of that theorem.
 
 ---
 
@@ -250,8 +272,9 @@ element, `balance` as a homomorphism), the unrepresentable-by-construction
 the OKF → kernel seam. That is enough to demonstrate the whole architecture on a
 real accounting operation.
 
-**Not yet:** account taxonomies (asset/liability/equity/income/expense), period
-close and its sum-preserving proof, aggregation/rollup across accounts, and more
-OKF concepts. Each new input is either _mechanical_ (a Lean invariant in
-`Pacioli/`) or _judgment_ (an OKF concept in `okf/`) — never both — so the seam
-above is the map for everything that comes next.
+**Not yet:** aggregation/rollup across accounts, account taxonomies
+(asset/liability/equity/income/expense) and the accounting equation they unlock,
+period close and its sum-preserving proof, and more OKF concepts. Each new input
+is either _mechanical_ (a Lean invariant in `Pacioli/`) or _judgment_ (an OKF
+concept in `okf/`) — never both — so the seam above is the map for everything
+that comes next.
