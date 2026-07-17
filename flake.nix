@@ -57,7 +57,9 @@
         git-hooks.lib.${system}.run {
           src = ./.;
           hooks = {
-            nixfmt-rfc-style.enable = true;
+            # `nixfmt` (not `nixfmt-rfc-style`): as of nixpkgs 25.11 the RFC 166
+            # formatter *is* `pkgs.nixfmt`, and the old alias warns on eval.
+            nixfmt.enable = true;
             deadnix.enable = true;
             statix.enable = true;
             check-merge-conflicts.enable = true;
