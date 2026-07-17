@@ -22,8 +22,13 @@ Pacioli splits accounting on a single question:
 Every contribution resolves to one side of that seam, **never both at once**:
 
 - **Yes → the mechanics.** Total functions and algebraic invariants — double
-  entry, the accounting equation, aggregation, close, consolidation. These are
-  codified and _proven_ in **Lean 4** under [`Pacioli/`](Pacioli/).
+  entry, the accounting equation, aggregation, close, consolidation. These
+  _belong_ in **Lean 4** under [`Pacioli/`](Pacioli/), codified and proven.
+  Today only double entry is: see
+  [`docs/architecture.md`](docs/architecture.md) for what is proven and what is
+  still ahead. (The accounting equation additionally needs accounts to be
+  _classified_ — which is judgment, so it arrives as an OKF concept plus a
+  mechanical theorem, not as Lean alone.)
 - **No → the judgment.** Policy, timing, materiality, classification,
   GAAP-vs-IFRS — anything that is "it depends." These are curated as cited,
   human- and agent-readable reasoning in the **OKF bundle**
