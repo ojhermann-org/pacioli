@@ -14,10 +14,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Job A — the fast hooks: nixfmt, deadnix, statix, markdownlint, hygiene, and
-  # the `no-sorry` Lean guard. This is exactly the local pre-commit set, so
-  # CI == `nix flake check` (one source of truth). It CANNOT run `lake build`:
-  # elan/Lake need network that the flake-check sandbox denies. That is Job B.
+  # The fast hooks: nixfmt, deadnix, statix, markdownlint, and whitespace/hygiene
+  # — exactly the local pre-commit set, so CI == `nix flake check` (one source of
+  # truth). The full Lean compile (a `lake build` job) will return alongside the
+  # mechanics.
   hooks:
     name: nix flake check
     runs-on: ubuntu-latest
@@ -28,17 +28,3 @@ jobs:
           extra_nix_config: |
             experimental-features = nix-command flakes
       - run: nix flake check -L
-
-  # Job B — the full Lean compile. `lake build` recompiles the kernel, which
-  # re-checks every proof (something `no-sorry` cannot do). `lean-action` reads
-  # `lean-toolchain`, installs elan, runs `lake exe cache get` for the mathlib
-  # olean cache, and caches build artifacts between runs. We name both libraries
-  # so the boundary `Examples` (not in defaultTargets) is verified too.
-  lean:
-    name: lake build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: leanprover/lean-action@v1
-        with:
-          build-args: "Pacioli Examples"

@@ -1,88 +1,102 @@
 # Pacioli
 
-_A verified core of accounting mechanics, paired with curated accounting
-judgment._
+_An attempt to build accounting on two honest halves: verified mechanics and
+curated judgment._
 
-This repository splits accounting into two cleanly isolated layers:
+> **Status: charter.** This repository is being rebuilt from its foundations.
+> It currently contains only this charter — the motivation and the thesis. No
+> mechanics are implemented yet. They will be developed as small, rigorous,
+> fully-proven increments, each worked through deliberately. Nothing below
+> describes code that exists today; it describes what Pacioli is _for_ and the
+> shape it intends to take.
 
-- **The mechanics**: deterministic mechanics are codified in _Lean 4_ so
-  illegal states are mathematically unrepresentable and invariants are proven.
-- **The Judgment**: Contextual decisions (policy, jurisdiction, timing,
-  materiality, and classification) are captured in the _Open Knowledge Format
-  (OKF)_, allowing humans and AI agents to share the same auditable reasoning.
+Pacioli proposes to split accounting into two cleanly isolated layers:
 
-_Lean guarantees that any given accounting inputs
-are handled correctly; OKF guides the judgment about what those inputs should
-be._
+- **The mechanics** — the deterministic, total parts of accounting, to be
+  codified in _Lean 4_ so that illegal states are unrepresentable and the
+  invariants that matter are machine-checked.
+- **The judgment** — the contextual decisions (policy, jurisdiction, timing,
+  materiality, classification), to be curated in the _Open Knowledge Format
+  (OKF)_ so that humans and AI agents can share the same auditable reasoning.
+
+The ambition: Lean guarantees that _given_ a set of accounting inputs the
+mechanics are handled correctly; OKF guides the judgment about _what_ those
+inputs should be.
 
 ---
 
 ## Why this split
 
 Most attempts to formalize accounting fail because they try to prove judgment
-calls. Revenue recognition timing, impairment, fair-value estimates, and
-GAAP-vs-IFRS classifications are not mathematical theorems—they are shifting
+calls. Revenue-recognition timing, impairment, fair-value estimates, and
+GAAP-vs-IFRS classifications are not mathematical theorems — they are shifting
 policies. Forcing these fluid rules into a strict type system creates brittle
-code that secretly hardcodes compliance policy, causing it to rot the moment an
+code that secretly hardcodes compliance policy, and it rots the moment an
 accounting standard changes.
 
-So the seam we cut on is a single question: **can this be made total and
-mechanical?**
+So the seam is a single question, asked of every rule:
 
-|              | Yes: the mechanics in Lean                                                                                | No: the judgement belongs in **OKF**                                                                              |
-| ------------ | --------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| Nature       | Total functions, algebraic invariants                                                                     | Policy, _"it depends"_, context                                                                                   |
-| Examples     | Double-entry balance, the accounting equation, aggregation/rollup, period close arithmetic, consolidation | Revenue recognition timing, depreciation policy choice, impairment triggers, materiality thresholds, GAAP vs IFRS |
-| Guarantee    | Machine-checked proof / uninhabited illegal states                                                        | Auditable, cited, human- and agent-readable reasoning                                                             |
-| Changes when | The _mathematics_ changes (rarely)                                                                        | A _standard or policy_ changes (often)                                                                            |
+> **Can this be made total and mechanical?**
+
+That question sorts each kind of accounting work onto one side of the seam:
+
+|              | Yes → the mechanics (Lean)                                                                      | No → the judgment (OKF)                                                                                           |
+| ------------ | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Nature       | Total functions, algebraic invariants                                                           | Policy, _"it depends"_, context                                                                                   |
+| Examples     | Double-entry balance, aggregation and rollup, period-close arithmetic, consolidation arithmetic | Revenue-recognition timing, depreciation-method choice, impairment triggers, materiality thresholds, GAAP vs IFRS |
+| Guarantee    | Machine-checked proof; illegal states uninhabited                                               | Auditable, cited, human- and agent-readable reasoning                                                             |
+| Changes when | The _mathematics_ changes (rarely)                                                              | A _standard or policy_ changes (often)                                                                            |
+
+Some statements straddle the seam on purpose. The **accounting equation**
+(`assets = liabilities + equity`) is the canonical one: it needs each account
+_classified_ as an asset, liability, or equity — that classification is
+judgment — and _then_ a mechanical theorem that the classified parts sum
+correctly. It is not one side or the other; it is a judgment input plus a
+mechanical proof, meeting at the seam.
 
 ---
 
 ## The interface contract (the crux)
 
-The halves meet at exactly one handshake, and keeping it clean is the whole
-design:
+The two halves are meant to meet at exactly one kind of handshake, and keeping
+it clean is the whole design:
 
-> An OKF concept encodes a **judgment** → the judgment produces **inputs**
-> → the Lean kernel
-> consumes those inputs **deterministically** and guarantees the mechanics.
+> A judgment (an OKF concept) produces **inputs** — plain data — and the Lean
+> kernel consumes those inputs **deterministically** and guarantees the
+> mechanics. The kernel neither knows nor cares _why_ the inputs are what they
+> are.
 
-Worked example:
+Illustratively: a policy for how to recognize revenue over a contract is
+judgment; from it a recognition _schedule_ is produced — just amounts and
+periods; and the kernel's job is to prove the resulting postings satisfy the
+mechanical properties it is responsible for (that they balance). The intent is
+that this seam be real — a typed, checkable artifact — rather than a human
+copying a number from a document into code.
 
-1. An OKF concept states: _"For SaaS contracts, recognize ratably over the
-   service period per ASC 606."_ — this is the **judgment**, auditable in OKF.
-2. From it, a **recognition schedule** is produced — just data: amounts and
-   periods.
-3. The Lean kernel takes the schedule and proves the resulting postings
-   **balance** and **sum to the contract value**. It neither knows nor cares
-   _why_ the schedule looks the way it does.
-
-The invariant that protects this: **policy never leaks into Lean types.** If a
-Lean type can only be constructed by making a policy choice, that choice belongs
-in OKF instead. The kernel is deliberately ignorant of _why_; it is expert in
-_that the mechanics are sound_.
+The invariant that protects the seam: **policy never leaks into Lean types.** If
+a Lean type could only be constructed by making a policy choice, that choice
+belongs in OKF instead.
 
 ---
 
-## Mathematical foundation
+## Mathematical foundation (the intended basis)
 
-The Lean kernel is built on
+The mechanics are meant to rest on
 [David Ellerman](https://www.ellerman.org/?s=accounting)'s group-theoretic
-formulation of double-entry bookkeeping rather than an ad-hoc algebra of our
+formulation of double-entry bookkeeping, rather than an ad-hoc algebra of our
 own.
 
 Double-entry implicitly uses the **group of differences** — the "**Pacioli
-group**" — constructed from ordered pairs of non-negative numbers. A
-**T-account is exactly such an ordered pair** `(debit, credit)`, and equality
-in the group is the equivalence `(d, c) ≡ (d', c') ⟺ d + c' = d' + c`.
+group**" — built from ordered pairs of non-negative numbers, with a T-account
+`(debit, credit)` as an element and equality given by the equivalence
+`(d, c) ≡ (d', c') ⟺ d + c' = d' + c`. The aim is a rigorous, citable base
+where a T-account is a genuine group element, a balanced transaction sums to the
+group identity, and the balance invariant is a _theorem_, not a runtime check.
 
-This gives us a rigorous, citable base where:
-
-- a **T-account** is a group element,
-- a **balanced transaction** is a tuple of elements summing to the group
-  identity,
-- **posting** is the group operation, and the balance invariant is a _theorem_
-  about it, not a runtime check.
+Making that real means actually constructing the group (not merely a monoid of
+pairs), bundling the balance map as a homomorphism so it composes, and proving
+the ledger invariant over every reachable state — the standard the rebuild holds
+itself to.
 
 Reference: David Ellerman, _On Double-Entry Bookkeeping: The Mathematical
 Treatment_, [arXiv:1407.1898](https://arxiv.org/abs/1407.1898) (see also
@@ -93,96 +107,67 @@ Ellerman 1982).
 ## Design principles
 
 1. **Make illegal states unrepresentable first, prove second.** Use Lean's type
-   system so that an unbalanced transaction cannot even be _constructed_. This
-   buys most of the safety for little proof effort.
-2. **Reserve full proofs for kernel invariants.** A handful of load-bearing
-   theorems, not one proof per rule.
-3. **Policy never leaks into types.** When in
-   doubt, judgment goes to OKF, mechanics to Lean.
+   system so that, e.g., an unbalanced transaction cannot even be _constructed_.
+   This buys much of the safety for little proof effort.
+2. **Reserve full proofs for load-bearing invariants.** A handful of theorems
+   the rest rests on, not one proof per rule.
+3. **Policy never leaks into types.** When in doubt, judgment goes to OKF,
+   mechanics to Lean.
 4. **Determinism at the boundary.** Everything Lean touches is a total function
-   of explicit data inputs. No hidden policy, no I/O, no ambiguity.
-5. **Everything is citable.** Lean invariants trace to their mathematical
+   of explicit data inputs — no hidden policy, no I/O, no ambiguity.
+5. **Rigour over speed.** Small, complete, well-explained increments. A proof
+   that is partial is not finished; there are no deadlines.
+6. **Everything is citable.** Lean invariants trace to their mathematical
    source; OKF concepts trace to the standard or literature that justifies them.
 
 ---
 
 ## Toolchain rationale
 
-**[Lean 4](https://lean-lang.org/)** was chosen over other dependently typed /
-verification languages because it uniquely combines: real dependent types, a
-growing and well-supported ecosystem (mathlib, active community), a genuine
-programming language that also proves theorems, and compilation to a portable
-binary. The nearest serious alternative for "verified software" alone is
-**F\*/Dafny** (SMT-backed refinement types, often more ergonomic for pure
-verification), but this project's value includes being a _citable formalization
-adjacent to mathematics_, where Lean's community gravity and proof culture win.
+**[Lean 4](https://lean-lang.org/)** is the intended home for the mechanics: it
+combines real dependent types, a growing and well-supported ecosystem (mathlib,
+an active community), a genuine programming language that also proves theorems,
+and compilation to a portable binary. The nearest serious alternative for
+"verified software" alone is **F\*/Dafny** (SMT-backed refinement types, often
+more ergonomic for pure verification), but part of Pacioli's value is being a
+_citable formalization adjacent to mathematics_, where Lean's community gravity
+and proof culture win.
 
-**OKF** ([Google Cloud, June 2026][okf-spec]) was chosen because it is a
-vendor-neutral, git-shippable standard — a directory of markdown files with YAML
-frontmatter, one concept per file — that is already structurally aligned with
-how coding agents store curated memory. That alignment means the judgment half
-is natively readable by the agents that will consume it.
+**OKF** ([Google Cloud, 2026][okf-spec]) is the intended home for the judgment:
+a vendor-neutral, git-shippable standard — a directory of markdown files with
+YAML frontmatter, one concept per file — already structurally aligned with how
+coding agents store curated memory. That alignment means the judgment half is
+natively readable by the agents meant to consume it.
 
 [okf-spec]: https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md
 
 ---
 
-## Repository layout (proposed)
-
-```
-.
-├── README.md            # this charter
-├── LICENSE              # Apache-2.0
-├── flake.nix            # Nix-managed toolchain (Lean + Lake)
-├── lean-toolchain       # pinned Lean version
-├── lakefile.toml        # Lake package manifest
-├── lake-manifest.json   # dependency lock — Reservoir requires this at the repo root
-├── Pacioli.lean         # library root (imports the modules below)
-├── Pacioli/             # kernel: Pacioli group, T-accounts, postings, invariants
-├── docs/                # architecture & reference (start at architecture.md)
-├── okf/                 # curated accounting judgment (OKF bundle)
-│   ├── index.md          # progressive-disclosure entry point
-│   └── concepts/         # one file per concept (policies, standards, playbooks)
-└── examples/            # worked slices crossing the boundary end-to-end
-```
-
-For how these pieces fit together — the type stack, the `balance` homomorphism,
-the fundamental invariant, and the OKF → kernel handshake, with diagrams — see
-**[docs/architecture.md](docs/architecture.md)**.
-
-The Lean package sits at the repository **root** (not under a `lean/`
-subdirectory) so that `lake-manifest.json` lands at the top level, which
-[Reservoir](https://reservoir.lean-lang.org/) requires for indexing.
-
-_(Layout is provisional and will settle as the first vertical slice lands.)_
-
----
-
 ## How this is meant to be used
 
-This repository is built for **agent–human collaboration**. The expected loop:
+Pacioli is built for **agent–human collaboration**. The intended loop:
 
 - A **human brings an input** — an idea from accounting literature, a new
   standard, a policy question, a worked example.
-- An **agent is responsible for updating the repository** — deciding whether the
-  input is _mechanical_ (a new Lean invariant in `Pacioli/`) or _judgment_ (a
-  new OKF concept in `okf/`), never both, and making that change while keeping
-  the halves and the interface between them clean.
-- The **OKF bundle** then tells humans and agents _what_ the accounting inputs
-  should be and _why_; the **Lean kernel** guarantees that, given those inputs,
-  the mechanics are correct — by construction and by proof.
+- An **agent (or human) updates the repository** — deciding whether the input is
+  _mechanical_ (a Lean invariant) or _judgment_ (an OKF concept), and making the
+  change while keeping the halves and the interface between them clean.
+- The **judgment half** then says _what_ the accounting inputs should be and
+  _why_; the **mechanical half** guarantees that, given those inputs, the
+  mechanics are correct — by construction and by proof.
 
-Humans can, of course, edit `Pacioli/` and `okf/` directly. But the repository
-is designed around the agent–human loop: the human supplies intent and judgment,
-and the agent translates it into verified mechanics and curated knowledge.
+The human supplies intent and judgment; the agent translates it into verified
+mechanics and curated knowledge.
 
 ---
 
 ## Status & license
 
+This repository is at its charter stage: the thesis above is settled, the
+mechanics are being rebuilt from the ground up, and the design and proofs are
+worked through deliberately rather than quickly.
+
 Licensed under the **[Apache License 2.0](LICENSE)** — a permissive,
-OSI-approved open-source license (the same license used by Lean core and
-mathlib), which also carries an explicit patent grant. Free to use, modify, and
-distribute, including commercially, under the terms of the license. The same
-license applies to the whole repository, both the Lean kernel (`lean/`) and the
-OKF knowledge bundle (`okf/`).
+OSI-approved open-source license (the same one used by Lean core and mathlib),
+which also carries an explicit patent grant. Free to use, modify, and
+distribute, including commercially, under the terms of the license.

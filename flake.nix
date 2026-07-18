@@ -18,42 +18,11 @@
       ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
 
-      # Fast, hermetic checks: Nix, markdown, hygiene, and a Lean-specific guard
-      # that no `sorry`/`admit` lands. `lake build` is NOT run here — elan/Lake
-      # need network the flake-check sandbox denies; the full Lean compile runs in
-      # pre-push and in a dedicated CI job instead.
+      # Fast, hermetic checks for the charter: Nix formatting/lint, markdown, and
+      # whitespace/hygiene. (Lean guards — `no-sorry` and the full `lake build` —
+      # will return with the mechanics.)
       hooksFor =
         system:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-          noSorry = pkgs.writeShellApplication {
-            name = "no-sorry";
-            runtimeInputs = [ pkgs.gnugrep ];
-            text = ''
-              status=0
-              for f in "$@"; do
-                if grep -nE '\b(sorry|admit)\b' "$f"; then
-                  echo "error: $f contains 'sorry' or 'admit' — proofs must be complete"
-                  status=1
-                fi
-              done
-              exit "$status"
-            '';
-          };
-          # The full Lean compile, run as a pre-push gate (not in flake check —
-          # elan/Lake need network the check sandbox denies). elan resolves the
-          # toolchain from `lean-toolchain` and puts `lake` on PATH; `cache get`
-          # pulls mathlib's prebuilt oleans so the push isn't a from-scratch
-          # build. Both libraries are named so `Examples` is compiled too.
-          lakeBuild = pkgs.writeShellApplication {
-            name = "lake-build";
-            runtimeInputs = [ pkgs.elan ];
-            text = ''
-              lake exe cache get
-              lake build Pacioli Examples
-            '';
-          };
-        in
         git-hooks.lib.${system}.run {
           src = ./.;
           hooks = {
@@ -83,23 +52,6 @@
                 MD025.front_matter_title = ""; # don't treat YAML front-matter title as an H1
               };
             };
-            no-sorry = {
-              enable = true;
-              name = "no sorry or admit in Lean sources";
-              entry = "${noSorry}/bin/no-sorry";
-              files = "\\.lean$";
-              language = "system";
-              pass_filenames = true;
-            };
-            lake-build = {
-              enable = true;
-              name = "lake build (full Lean compile)";
-              entry = "${lakeBuild}/bin/lake-build";
-              language = "system";
-              stages = [ "pre-push" ];
-              pass_filenames = false;
-              always_run = true;
-            };
           };
         };
     in
@@ -117,7 +69,7 @@
         {
           default = pkgs.mkShell {
             inherit (hooks) shellHook;
-            buildInputs = hooks.enabledPackages ++ [ pkgs.elan ];
+            buildInputs = hooks.enabledPackages;
           };
         }
       );
