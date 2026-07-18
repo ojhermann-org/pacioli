@@ -2,6 +2,6 @@
 # convention). Each clone keeps a thin, untracked local `.envrc` that just
 # `source_env`s this file.
 #
-# `use flake` loads the Nix dev shell, which provides the toolchain
-# (elan → Lean via lean-toolchain) and installs the git hooks.
+# `use flake` loads the Nix dev shell, which provides the lint/hygiene tools
+# and installs the git hooks. (The Lean toolchain returns with the mechanics.)
 use flake
