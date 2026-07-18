@@ -79,31 +79,6 @@ belongs in OKF instead.
 
 ---
 
-## Mathematical foundation (the intended basis)
-
-The mechanics are meant to rest on
-[David Ellerman](https://www.ellerman.org/?s=accounting)'s group-theoretic
-formulation of double-entry bookkeeping, rather than an ad-hoc algebra of our
-own.
-
-Double-entry implicitly uses the **group of differences** — the "**Pacioli
-group**" — built from ordered pairs of non-negative numbers, with a T-account
-`(debit, credit)` as an element and equality given by the equivalence
-`(d, c) ≡ (d', c') ⟺ d + c' = d' + c`. The aim is a rigorous, citable base
-where a T-account is a genuine group element, a balanced transaction sums to the
-group identity, and the balance invariant is a _theorem_, not a runtime check.
-
-Making that real means actually constructing the group (not merely a monoid of
-pairs), bundling the balance map as a homomorphism so it composes, and proving
-the ledger invariant over every reachable state — the standard the rebuild holds
-itself to.
-
-Reference: David Ellerman, _On Double-Entry Bookkeeping: The Mathematical
-Treatment_, [arXiv:1407.1898](https://arxiv.org/abs/1407.1898) (see also
-Ellerman 1982).
-
----
-
 ## Design principles
 
 1. **Make illegal states unrepresentable first, prove second.** Use Lean's type
