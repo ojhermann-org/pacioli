@@ -4,10 +4,11 @@ Thanks for your interest in Pacioli. This guide covers **how the repository is
 meant to grow** and the **mechanics of contributing** to it. For _why_ Pacioli
 is split the way it is, read the [README](README.md) first.
 
-Pacioli is at its **charter stage**: the thesis is settled and the mechanics are
-being rebuilt from the ground up. So this guide describes the collaboration
-model and the workflow that will carry the rebuild; the Lean- and OKF-specific
-conventions will return to this document alongside the code they govern.
+Pacioli has begun landing its **first mechanics**: the thesis is settled and the
+mechanics are built from the ground up as small, deliberate increments. This
+guide describes the collaboration model and workflow; the Lean- and OKF-specific
+conventions return to it alongside the code they govern (the first are under
+"Development conventions" below).
 
 Pacioli values **correctness, comprehensibility, and robust discussion** over
 speed. There are no deadlines. A change that is small, well-explained, and
@@ -87,8 +88,10 @@ source of truth.
 - **In CI** (every PR, and `main`): one required job — **`nix flake check`** —
   running exactly those hooks. A red run blocks the merge.
 
-When the mechanics return, the Lean proof gates (a `no-sorry`/axiom guard and
-the full `lake build` compile) will be added back as required checks.
+The mechanics have begun to land, so the Lean proof gates — a `no-sorry`/axiom
+guard and the full `lake build` compile — are being added as required checks
+(tracked in issue #37); until then, [`scripts/lean-check.sh`](scripts/lean-check.sh)
+runs them locally.
 
 ### Repository settings as code
 
@@ -106,6 +109,17 @@ PR (which can't be self-approved) uses [`scripts/merge.sh`](scripts/merge.sh)
 - **Markdown** wraps prose at **80 columns** (`MD013`); tables and code/Mermaid
   blocks are exempt. Table pipes must be aligned (`MD060`) — `prettier` does
   this.
+
+### Development conventions
+
+Two standing practices, adopted with the first mechanics:
+
+- **Cite load-bearing invariants.** A Lean invariant traces to its mathematical
+  or accounting source (README design principle 6) — put the citation in the
+  declaration's docstring when it lands, not later.
+- **Keep documentation in step with the code.** Update the affected docs
+  (README status, this guide, module/declaration docstrings) in the _same_
+  change as the code, so the docs never claim something the code has outgrown.
 
 ---
 
