@@ -76,14 +76,20 @@ arithmetica* (1494). Stating it **per currency** is the multi-currency
 refinement: a transaction spanning several currencies must balance in each one
 independently, never by coincidentally-equal magnitudes summed across units.
 
+Per-currency balance is a modelling commitment: a genuine cross-currency trade
+does not balance within each currency at spot, so it must route through an
+explicit FX-bridge (clearing) account whose entries make each currency leg
+self-balance. There is no reporting-currency balance at this layer.
+
 Balance is bundled into the type — a `Transaction` carries a proof that it
 balances, so an *unbalanced* transaction cannot be constructed at all.
 
 The empty transaction balances trivially (`0 = 0` in every currency), and this
 is **deliberate**: the empty / all-zero case is degenerate-but-valid, not
 illegal (the illegal state — an unbalanced transaction — is exactly what the
-type forbids), and the empty transaction is the identity we will want once
-transaction composition is defined. Requiring a transaction to be *non-trivial*
+type forbids), and the empty transaction will be the identity element once the
+journal / ledger layer defines composition of balanced entry-collections.
+Requiring a transaction to be *non-trivial*
 (non-empty, a positive debit and credit) is an authoring-layer concern kept out
 of this substrate — see issue #35.
 
@@ -106,6 +112,62 @@ def totalDebits [DecidableEq γ] [AddCommMonoid ν] (c : γ) (es : List (Entry �
 /-- The total `value` of the `c`-denominated credit entries in `es`. -/
 def totalCredits [DecidableEq γ] [AddCommMonoid ν] (c : γ) (es : List (Entry α γ ν τ)) : ν :=
   totalBy c .credit es
+
+/-! ## Aggregation lemmas
+
+`totalBy` — and hence `totalDebits`/`totalCredits` — is a **list homomorphism**:
+it sends the empty list to `0` and concatenation to `+`, and is invariant under
+reordering. These structural lemmas are what every downstream result — composing
+into a journal, aggregating a ledger, closing a period — will rest on. -/
+
+@[simp] theorem totalBy_nil [DecidableEq γ] [AddCommMonoid ν] (c : γ) (d : EntryType) :
+    totalBy c d ([] : List (Entry α γ ν τ)) = 0 := by
+  simp [totalBy]
+
+@[simp] theorem totalBy_cons [DecidableEq γ] [AddCommMonoid ν]
+    (c : γ) (d : EntryType) (e : Entry α γ ν τ) (es : List (Entry α γ ν τ)) :
+    totalBy c d (e :: es) =
+      (if e.currency = c ∧ e.direction = d then e.value else 0) + totalBy c d es := by
+  simp only [totalBy, List.filter_cons]
+  by_cases h : e.currency = c ∧ e.direction = d <;> simp [h]
+
+@[simp] theorem totalBy_append [DecidableEq γ] [AddCommMonoid ν]
+    (c : γ) (d : EntryType) (a b : List (Entry α γ ν τ)) :
+    totalBy c d (a ++ b) = totalBy c d a + totalBy c d b := by
+  simp [totalBy, List.filter_append, List.map_append, List.sum_append]
+
+/-- `totalBy` ignores entry order: a permutation of the entries has the same
+total. This is the formal content of "entry order carries no accounting
+meaning", and the fact the `Multiset` refinement (issue #32) will rest on. -/
+theorem totalBy_perm [DecidableEq γ] [AddCommMonoid ν] (c : γ) (d : EntryType)
+    {a b : List (Entry α γ ν τ)} (h : a.Perm b) : totalBy c d a = totalBy c d b :=
+  List.Perm.sum_eq ((h.filter _).map _)
+
+@[simp] theorem totalDebits_nil [DecidableEq γ] [AddCommMonoid ν] (c : γ) :
+    totalDebits c ([] : List (Entry α γ ν τ)) = 0 := by
+  simp [totalDebits]
+
+@[simp] theorem totalDebits_append [DecidableEq γ] [AddCommMonoid ν]
+    (c : γ) (a b : List (Entry α γ ν τ)) :
+    totalDebits c (a ++ b) = totalDebits c a + totalDebits c b := by
+  simp [totalDebits]
+
+theorem totalDebits_perm [DecidableEq γ] [AddCommMonoid ν] (c : γ)
+    {a b : List (Entry α γ ν τ)} (h : a.Perm b) : totalDebits c a = totalDebits c b :=
+  totalBy_perm c .debit h
+
+@[simp] theorem totalCredits_nil [DecidableEq γ] [AddCommMonoid ν] (c : γ) :
+    totalCredits c ([] : List (Entry α γ ν τ)) = 0 := by
+  simp [totalCredits]
+
+@[simp] theorem totalCredits_append [DecidableEq γ] [AddCommMonoid ν]
+    (c : γ) (a b : List (Entry α γ ν τ)) :
+    totalCredits c (a ++ b) = totalCredits c a + totalCredits c b := by
+  simp [totalCredits]
+
+theorem totalCredits_perm [DecidableEq γ] [AddCommMonoid ν] (c : γ)
+    {a b : List (Entry α γ ν τ)} (h : a.Perm b) : totalCredits c a = totalCredits c b :=
+  totalBy_perm c .credit h
 
 /-- A **transaction**: a list of entries together with a proof that it balances
 per currency (for every currency, total debits equal total credits). Bundling
