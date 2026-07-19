@@ -114,7 +114,7 @@ identity seen through the classification — it holds for **any** total `classif
 and so provides *no* check that a classification is correct: a misclassification
 cannot be caught here; that correctness lives entirely in the judgment/OKF
 half. -/
-theorem accounting_equation [DecidableEq γ] [AddCommMonoid ν] [PartialOrder ν]
+theorem accounting_equation_differential [DecidableEq γ] [AddCommMonoid ν] [PartialOrder ν]
     [CanonicallyOrderedAdd ν] (classify : α → AccountClass)
     (t : Transaction α γ ν τ) (c : γ) :
     assetIncrease classify c t.entries + claimDecrease classify c t.entries

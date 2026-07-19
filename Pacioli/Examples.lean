@@ -31,6 +31,6 @@ assets rise by 100 (cash debited) and claims rise by 100 (loan credited). -/
 example :
     assetIncrease classify () takeLoan.entries + claimDecrease classify () takeLoan.entries
       = claimIncrease classify () takeLoan.entries + assetDecrease classify () takeLoan.entries :=
-  accounting_equation classify takeLoan ()
+  accounting_equation_differential classify takeLoan ()
 
 end Pacioli.Examples
