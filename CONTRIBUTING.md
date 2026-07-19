@@ -112,7 +112,7 @@ PR (which can't be self-approved) uses [`scripts/merge.sh`](scripts/merge.sh)
 
 ### Development conventions
 
-Two standing practices, adopted with the first mechanics:
+Three standing practices, adopted with the first mechanics:
 
 - **Cite load-bearing invariants.** A Lean invariant traces to its mathematical
   or accounting source (README design principle 6) — put the citation in the
@@ -120,6 +120,32 @@ Two standing practices, adopted with the first mechanics:
 - **Keep documentation in step with the code.** Update the affected docs
   (README status, this guide, module/declaration docstrings) in the _same_
   change as the code, so the docs never claim something the code has outgrown.
+- **Critically review each substantive increment before committing** (see the
+  next section).
+
+### Critical review
+
+Every substantive mechanics increment — a new definition, invariant, or proof —
+is put through a **three-lens critical review** before it lands, so the practice
+is repeatable by anyone (human or agent):
+
+- **Lean idioms & proof robustness.** Is it idiomatic (naming, namespacing,
+  `deriving`, the `@[simp]` / lemma API)? Are the proofs sturdy rather than
+  accidental — no fragile bare `rw`/`add_comm`, no silent reliance on a
+  definitional unfolding that a later `irreducible` would break? Is it
+  `sorry`- and axiom-clean (`#print axioms`)?
+- **Accounting fidelity.** Does the model faithfully capture the bookkeeping?
+  Does any statement over- or under-claim (e.g. a differential law read as a
+  standing identity, a per-class rule read as per-account)? What is the right
+  next theorem?
+- **Charter & seam alignment.** Does judgment stay out of the types (principle
+  3)? Are the invariants that get full proofs the load-bearing ones (2), and are
+  they cited (5)? Do the docstrings match what is actually proved?
+
+Each lens reports findings ranked by severity. Triage them into **fix now** vs
+**defer to a tracked issue**, apply the fixes, re-verify green and sorry-free
+(`scripts/lean-check.sh`), and only then commit. Record the deferred findings as
+issues so nothing is silently dropped.
 
 ---
 
