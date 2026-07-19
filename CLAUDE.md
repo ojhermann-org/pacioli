@@ -7,6 +7,16 @@ for the workflow — the dev setup, the **Development conventions**, the
 **Critical review** practice, and the **Contributing a change** PR checklist.
 Follow those; this file only adds what an agent needs on top of them.
 
+## Scope: this repo is the pure verified core
+
+Applied use — for accountants, applications, and the MCP — is **not** built here.
+It lives **downstream**, in separate repo(s), behind **one verified artifact
+compiled from Lean** (a checker; CLI-over-JSON first, a Lean→C binary later). So
+keep this repo pure: **no JSON / IO / FFI / currency tables / default charts in
+the core.** Don't add an "applied" or "convenience" surface to these modules;
+that belongs downstream. Decision + rationale: **issue #41** and the
+`pacioli-applied-layer-architecture` memory.
+
 ## Build and verify
 
 - Enter the toolchain with `nix develop` (direnv auto-loads it on `cd`). Lean and
