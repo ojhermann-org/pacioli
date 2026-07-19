@@ -63,7 +63,7 @@ caller's data, not the kernel's, so none of that policy leaks into the types.
 `τ` is unconstrained here; mechanics that compare or order times (mapping FX
 rates to entries, period boundaries) ask for that structure at the point of use,
 just as aggregation asks for `DecidableEq` / an additive monoid where it needs
-them (issue #34).
+them.
 -/
 
 /-- A single accounting entry: posts `value`, in currency `currency`, to

@@ -10,8 +10,8 @@ Follow those; this file only adds what an agent needs on top of them.
 ## Build and verify
 
 - Enter the toolchain with `nix develop` (direnv auto-loads it on `cd`). Lean and
-  Mathlib are **pinned at v4.32.0** via `elan`; `lake`/`lean` come from the
-  flake, so run Lean commands inside the dev shell.
+  Mathlib are **pinned at v4.32.0**; the flake provides `elan`, and `elan`
+  provides the `lake`/`lean` shims, so run Lean commands inside the dev shell.
 - The local gate is **`scripts/lean-check.sh`** — `lake build` + a sorry check.
   Run it before committing. For a new load-bearing theorem, also check
   `#print axioms`.

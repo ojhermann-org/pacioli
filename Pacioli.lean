@@ -7,7 +7,9 @@
 --   Aggregation    — per-currency/direction totals and their homomorphism lemmas
 --   Transaction    — the bundled per-currency balance invariant
 --   Classification — asset/claim taxonomy and the accounting equation
+--   Examples       — a worked instantiation over concrete types (a smoke test)
 import Pacioli.Entry
 import Pacioli.Aggregation
 import Pacioli.Transaction
 import Pacioli.Classification
+import Pacioli.Examples

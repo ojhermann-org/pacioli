@@ -11,7 +11,7 @@ which collapses the familiar `assets = liabilities + equity` into
 `assets = claims`; GAAP and IFRS agree on the arithmetic, so the stance is
 mechanical, not jurisdictional.
 
-This taxonomy and the normal-balance convention (`normalSide`) are *mechanical* —
+This taxonomy and the normal-balance convention (`AccountClass.normalSide`) are *mechanical* —
 a fixed skeleton. The *assignment* of accounts to classes is *judgment*: it
 enters as a function `classify : α → AccountClass` supplied from the OKF half,
 never baked into a type. Every theorem below holds for **any** total `classify`.
@@ -19,7 +19,7 @@ never baked into a type. Every theorem below holds for **any** total `classify`.
 The taxonomy is deliberately minimal (two-way, with two claim kinds). Revenue and
 expense are *temporary equity* accounts, so at this layer they classify as
 `.claim .equity`; distinguishing them (for the income statement and
-period-close) is deferred, as are contra accounts (see `normalSide`).
+period-close) is deferred, as are contra accounts (see `AccountClass.normalSide`).
 -/
 
 namespace Pacioli
@@ -54,14 +54,14 @@ credit-normal account classified `asset`) is handled by *net-pool* semantics: it
 is assigned to the pool it reduces, and its entries net correctly there. A
 per-*account* normal side (to flag contras or abnormal balances) is a later
 concept. -/
-def normalSide : AccountClass → EntryType
+def AccountClass.normalSide : AccountClass → EntryType
   | .asset   => .debit
   | .claim _ => .credit
 
 /-- Claims sit on the side opposite assets: a claim's normal side is the other
-of the asset normal side. (`normalSide` ignores the claim kind.) -/
-theorem normalSide_claim (k : Claim) :
-    normalSide (.claim k) = (normalSide .asset).other := rfl
+of the asset normal side. (`AccountClass.normalSide` ignores the claim kind.) -/
+theorem AccountClass.normalSide_claim (k : Claim) :
+    AccountClass.normalSide (.claim k) = (AccountClass.normalSide .asset).other := rfl
 
 /-- Entries posted to an asset account, under classification `classify`. -/
 def assetEntries (classify : α → AccountClass) (es : List (Entry α γ ν τ)) :
@@ -77,23 +77,23 @@ def claimEntries (classify : α → AccountClass) (es : List (Entry α γ ν τ)
 their normal side. -/
 def assetIncrease [DecidableEq γ] [AddCommMonoid ν] (classify : α → AccountClass)
     (c : γ) (es : List (Entry α γ ν τ)) : ν :=
-  totalBy c (normalSide .asset) (assetEntries classify es)
+  totalBy c (AccountClass.normalSide .asset) (assetEntries classify es)
 
 /-- Value in currency `c` that **decreases** the asset side. -/
 def assetDecrease [DecidableEq γ] [AddCommMonoid ν] (classify : α → AccountClass)
     (c : γ) (es : List (Entry α γ ν τ)) : ν :=
-  totalBy c (normalSide .asset).other (assetEntries classify es)
+  totalBy c (AccountClass.normalSide .asset).other (assetEntries classify es)
 
 /-- Value in currency `c` that **increases** the claim side: claims posted on
 their normal side. -/
 def claimIncrease [DecidableEq γ] [AddCommMonoid ν] (classify : α → AccountClass)
     (c : γ) (es : List (Entry α γ ν τ)) : ν :=
-  totalBy c (normalSide .asset).other (claimEntries classify es)
+  totalBy c (AccountClass.normalSide .asset).other (claimEntries classify es)
 
 /-- Value in currency `c` that **decreases** the claim side. -/
 def claimDecrease [DecidableEq γ] [AddCommMonoid ν] (classify : α → AccountClass)
     (c : γ) (es : List (Entry α γ ν τ)) : ν :=
-  totalBy c (normalSide .asset) (claimEntries classify es)
+  totalBy c (AccountClass.normalSide .asset) (claimEntries classify es)
 
 /-- **The accounting equation** — differential form — at the single-transaction
 level and per currency: a balanced transaction's net change to the **asset** side
@@ -120,7 +120,7 @@ theorem accounting_equation [DecidableEq γ] [AddCommMonoid ν] [PartialOrder ν
     assetIncrease classify c t.entries + claimDecrease classify c t.entries
       = claimIncrease classify c t.entries + assetDecrease classify c t.entries := by
   simp only [assetIncrease, claimDecrease, claimIncrease, assetDecrease, assetEntries,
-    claimEntries, normalSide, EntryType.other]
+    claimEntries, AccountClass.normalSide, EntryType.other]
   rw [totalBy_filter_add, add_comm (totalBy c .credit _) (totalBy c .credit _),
     totalBy_filter_add]
   simpa [totalDebits, totalCredits] using t.balanced c

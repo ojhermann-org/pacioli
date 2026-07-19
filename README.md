@@ -6,9 +6,11 @@ curated judgment._
 > **Status: first mechanics under way.** The charter below — the motivation and
 > the thesis — is settled, and the first verified mechanics are now being built
 > on top of it as small, rigorous increments, each worked through deliberately.
-> The entry/transaction substrate — double-entry entries and the per-currency
-> balance (trial-balance) invariant, in Lean 4 — is the first of these. What
-> follows describes what Pacioli is _for_ and the shape it takes.
+> The first of these lands the entry/transaction substrate — double-entry
+> entries and the per-currency balance invariant — and, on top of it, the
+> asset/claim classification and the accounting equation (a balanced
+> transaction moves assets and claims equally), all in Lean 4. What follows
+> describes what Pacioli is _for_ and the shape it takes.
 
 Pacioli proposes to split accounting into two cleanly isolated layers:
 
@@ -147,8 +149,8 @@ mechanics and curated knowledge.
 
 This repository has moved from charter into its first mechanics: the thesis
 above is settled, and the mechanics are built from the ground up as small,
-deliberately worked increments — the entry/transaction substrate first —
-rather than quickly.
+deliberately worked increments — the entry/transaction substrate and the
+accounting equation (`assets = claims`) first — rather than quickly.
 
 Licensed under the **[Apache License 2.0](LICENSE)** — a permissive,
 OSI-approved open-source license (the same one used by Lean core and mathlib),

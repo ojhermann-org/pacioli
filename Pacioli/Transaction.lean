@@ -7,9 +7,10 @@ A **transaction** is a collection of entries that balances **within each
 currency**: for every currency, the total of its debits equals the total of its
 credits.
 
-This is the *trial-balance identity* — the debits-equal-credits equality at the
-heart of double-entry bookkeeping, first codified in Luca Pacioli's *Summa de
-arithmetica* (1494). Stating it **per currency** is the multi-currency
+This is the double-entry **balancing rule** — a transaction's debits equal its
+credits — the debits-equal-credits identity first codified in Luca Pacioli's
+*Summa de arithmetica* (1494); its ledger-wide, period-end form is the *trial
+balance*. Stating it **per currency** is the multi-currency
 refinement: a transaction spanning several currencies must balance in each one
 independently, never by coincidentally-equal magnitudes summed across units.
 
