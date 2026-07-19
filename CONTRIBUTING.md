@@ -4,10 +4,11 @@ Thanks for your interest in Pacioli. This guide covers **how the repository is
 meant to grow** and the **mechanics of contributing** to it. For _why_ Pacioli
 is split the way it is, read the [README](README.md) first.
 
-Pacioli is at its **charter stage**: the thesis is settled and the mechanics are
-being rebuilt from the ground up. So this guide describes the collaboration
-model and the workflow that will carry the rebuild; the Lean- and OKF-specific
-conventions will return to this document alongside the code they govern.
+Pacioli has begun landing its **first mechanics**: the thesis is settled and the
+mechanics are built from the ground up as small, deliberate increments. This
+guide describes the collaboration model and workflow; the Lean- and OKF-specific
+conventions return to it alongside the code they govern (the first are under
+"Development conventions" below).
 
 Pacioli values **correctness, comprehensibility, and robust discussion** over
 speed. There are no deadlines. A change that is small, well-explained, and
@@ -87,8 +88,10 @@ source of truth.
 - **In CI** (every PR, and `main`): one required job — **`nix flake check`** —
   running exactly those hooks. A red run blocks the merge.
 
-When the mechanics return, the Lean proof gates (a `no-sorry`/axiom guard and
-the full `lake build` compile) will be added back as required checks.
+The mechanics have begun to land, so the Lean proof gates — a `no-sorry`/axiom
+guard and the full `lake build` compile — are being added as required checks
+(tracked in issue #37); until then, [`scripts/lean-check.sh`](scripts/lean-check.sh)
+runs them locally.
 
 ### Repository settings as code
 
@@ -107,28 +110,88 @@ PR (which can't be self-approved) uses [`scripts/merge.sh`](scripts/merge.sh)
   blocks are exempt. Table pipes must be aligned (`MD060`) — `prettier` does
   this.
 
+### Development conventions
+
+Three standing practices, adopted with the first mechanics:
+
+- **Cite load-bearing invariants.** A Lean invariant traces to its mathematical
+  or accounting source (README design principle 6) — put the citation in the
+  declaration's docstring when it lands, not later.
+- **Keep documentation in step with the code.** Update the affected docs
+  (README status, this guide, module/declaration docstrings) in the _same_
+  change as the code, so the docs never claim something the code has outgrown.
+- **Critically review each substantive increment before committing** (see the
+  next section).
+
+### Critical review
+
+Every substantive mechanics increment — a new definition, invariant, or proof —
+is put through a **three-lens critical review** before it lands, so the practice
+is repeatable by anyone (human or agent):
+
+- **Lean idioms & proof robustness.** Is it idiomatic (naming, namespacing,
+  `deriving`, the `@[simp]` / lemma API)? Are the proofs sturdy rather than
+  accidental — no fragile bare `rw`/`add_comm`, no silent reliance on a
+  definitional unfolding that a later `irreducible` would break? Is it
+  `sorry`- and axiom-clean (`#print axioms`)?
+- **Accounting fidelity.** Does the model faithfully capture the bookkeeping?
+  Does any statement over- or under-claim (e.g. a differential law read as a
+  standing identity, a per-class rule read as per-account)? What is the right
+  next theorem?
+- **Charter & seam alignment.** Does judgment stay out of the types (principle
+  3)? Are the invariants that get full proofs the load-bearing ones (2), and are
+  they cited (5)? Do the docstrings match what is actually proved?
+
+Each lens reports findings ranked by severity. Triage them into **fix now** vs
+**defer to a tracked issue**, apply the fixes, re-verify green and sorry-free
+(`scripts/lean-check.sh`), and only then commit. Record the deferred findings as
+issues so nothing is silently dropped.
+
+These three lenses are the current set; **expand it as the work demands** — a
+performance lens, an OKF-interface lens, or whatever a future increment calls
+for.
+
 ---
 
 ## Contributing a change
 
 Everything lands through a **pull request** — no direct commits to `main`.
+Branch off `main`, make the change on **one side of the seam** (mechanics _or_
+judgment), and keep it **small and well-explained** — say _why_, not just
+_what_.
 
-1. **Branch** off `main`.
-2. Make the change on **one side of the seam** where it applies (mechanics _or_
-   judgment).
-3. Keep it **small and well-explained**; the commit message and PR should say
-   _why_, not just _what_.
-4. Ensure `nix flake check` is green locally.
-5. **Open a PR.** For it to become mergeable:
-   - the required check — **`nix flake check`** — passes;
-   - the repository owner (**@ojhermann**) has **approved** — they are
-     requested as a reviewer automatically (via
-     [`CODEOWNERS`](.github/CODEOWNERS)), so you needn't add them by hand;
-   - **every review conversation is resolved.**
-6. **Only the owner merges.** Approved, green PRs go through a **merge queue**:
-   the PR is re-tested against the latest `main` before it lands, so a merge can
-   never break `main`. Merges are **squash → delete branch**, keeping history
-   linear.
+### Before opening (or un-drafting) the PR
+
+- **Verify.** `scripts/lean-check.sh` is green and **sorry-free**; run
+  `#print axioms` on any new load-bearing theorem and confirm there are no
+  unexpected axioms.
+- **Lint and format.** `nix flake check` is green — `nixfmt`, `deadnix`,
+  `statix`, `markdownlint`, and whitespace/EOF hygiene. Format TOML with
+  `taplo`; there is no `.lean` autoformatter, so follow the Mathlib layout (the
+  100-column guide).
+- **Docs in step, invariants cited.** Update the affected docs (README status,
+  this guide, module/declaration docstrings) in the _same_ change, and cite any
+  new load-bearing invariant (see
+  [Development conventions](#development-conventions)).
+- **Critical review.** Run the [critical review](#critical-review) — the three
+  lenses (Lean idioms & proof robustness, accounting fidelity, charter & seam
+  alignment). Triage findings **fix now** vs **defer**, apply the fixes, and
+  file an issue for every deferred finding.
+
+### Landing it
+
+Open the PR as a **draft** while the increment is in progress; mark it ready once
+the checklist above is done. For it to become mergeable:
+
+- the required check — **`nix flake check`** — passes;
+- the repository owner (**@ojhermann**) has **approved** — requested
+  automatically via [`CODEOWNERS`](.github/CODEOWNERS), so you needn't add them
+  by hand;
+- **every review conversation is resolved** — no open comments.
+
+**Only the owner merges.** Approved, green PRs go through a **merge queue**: the
+PR is re-tested against the latest `main` before it lands, so a merge can never
+break `main`. Merges are **squash → delete branch**, keeping history linear.
 
 ---
 

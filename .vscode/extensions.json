@@ -1,0 +1,15 @@
+{
+  // Recommended extensions for developing Pacioli in VS Code.
+  //
+  //   leanprover.lean4 — the Lean 4 language server / InfoView. It drives the
+  //     proof state, diagnostics, and `lake` builds. It finds the toolchain via
+  //     `elan`/`lake` on PATH and reads the repo's `lean-toolchain` (v4.32.0).
+  //
+  //   mkhl.direnv — loads this repo's `.envrc` into the VS Code environment.
+  //     This is load-bearing here: `elan`, `lake`, and `lean` come from the Nix
+  //     dev shell (see `flake.nix`), not a global install, so without direnv
+  //     integration VS Code's PATH won't contain them and the Lean extension
+  //     has no toolchain to launch. Open the folder, "allow" the .envrc when
+  //     prompted, and the Lean server starts against the flake-provided lake.
+  "recommendations": ["leanprover.lean4", "mkhl.direnv"]
+}

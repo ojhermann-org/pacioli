@@ -69,7 +69,18 @@
         {
           default = pkgs.mkShell {
             inherit (hooks) shellHook;
-            buildInputs = hooks.enabledPackages;
+            buildInputs = hooks.enabledPackages ++ [
+              # `elan` is Lean's official toolchain multiplexer: the flake
+              # provides the `elan` binary, and `elan` provides `lake`/`lean`
+              # shims that read `lean-toolchain` and fetch the pinned Lean into
+              # ~/.elan. This is what both the VS Code Lean4 extension and
+              # Helix's `lake serve` expect, and it's what makes mathlib's
+              # prebuilt binary cache (`lake exe cache get`) usable.
+              pkgs.elan
+              # `taplo` formats `lakefile.toml` / `lake-manifest.json`-adjacent
+              # TOML (the `.helix/languages.toml` formatter for TOML calls it).
+              pkgs.taplo
+            ];
           };
         }
       );

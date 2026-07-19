@@ -3,12 +3,14 @@
 _An attempt to build accounting on two honest halves: verified mechanics and
 curated judgment._
 
-> **Status: charter.** This repository is being rebuilt from its foundations.
-> It currently contains only this charter — the motivation and the thesis. No
-> mechanics are implemented yet. They will be developed as small, rigorous,
-> fully-proven increments, each worked through deliberately. Nothing below
-> describes code that exists today; it describes what Pacioli is _for_ and the
-> shape it intends to take.
+> **Status: first mechanics under way.** The charter below — the motivation and
+> the thesis — is settled, and the first verified mechanics are now being built
+> on top of it as small, rigorous increments, each worked through deliberately.
+> The first of these lands the entry/transaction substrate — double-entry
+> entries and the per-currency balance invariant — and, on top of it, the
+> asset/claim classification and the accounting equation (a balanced
+> transaction moves assets and claims equally), all in Lean 4. What follows
+> describes what Pacioli is _for_ and the shape it takes.
 
 Pacioli proposes to split accounting into two cleanly isolated layers:
 
@@ -118,6 +120,13 @@ natively readable by the agents meant to consume it.
 
 ---
 
+## The mechanics, in code
+
+The Lean library is documented module-by-module — with a dependency diagram, the
+seam, and the theorem chain — in **[docs/architecture.md](docs/architecture.md)**.
+
+---
+
 ## How this is meant to be used
 
 Pacioli is built for **agent–human collaboration**. The intended loop:
@@ -138,9 +147,10 @@ mechanics and curated knowledge.
 
 ## Status & license
 
-This repository is at its charter stage: the thesis above is settled, the
-mechanics are being rebuilt from the ground up, and the design and proofs are
-worked through deliberately rather than quickly.
+This repository has moved from charter into its first mechanics: the thesis
+above is settled, and the mechanics are built from the ground up as small,
+deliberately worked increments — the entry/transaction substrate and the
+accounting equation (`assets = claims`) first — rather than quickly.
 
 Licensed under the **[Apache License 2.0](LICENSE)** — a permissive,
 OSI-approved open-source license (the same one used by Lean core and mathlib),
