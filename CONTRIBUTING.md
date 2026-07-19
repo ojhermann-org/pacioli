@@ -85,13 +85,15 @@ source of truth.
 
 - **On commit** (fast hooks): `nixfmt`, `deadnix`, `statix` for Nix;
   `markdownlint` for docs; and whitespace/EOF/merge-conflict/YAML hygiene.
-- **In CI** (every PR, and `main`): one required job — **`nix flake check`** —
-  running exactly those hooks. A red run blocks the merge.
+- **In CI** (every PR, and `main`): two required jobs — **`nix flake check`**
+  (those hooks) and **`lake build`** (the full Lean compile plus the sorry
+  check, via [`scripts/lean-check.sh`](scripts/lean-check.sh)). A red run on
+  either blocks the merge.
 
-The mechanics have begun to land, so the Lean proof gates — a `no-sorry`/axiom
-guard and the full `lake build` compile — are being added as required checks
-(tracked in issue #37); until then, [`scripts/lean-check.sh`](scripts/lean-check.sh)
-runs them locally.
+The `lake build` job runs the _same_ `scripts/lean-check.sh` you run locally, so
+the Lean gate is identical in both places. A deeper `no-sorry`/axiom guard
+(`#print axioms` on the load-bearing theorems) is the remaining follow-up on
+issue #37.
 
 ### Repository settings as code
 
@@ -183,7 +185,7 @@ _what_.
 Open the PR as a **draft** while the increment is in progress; mark it ready once
 the checklist above is done. For it to become mergeable:
 
-- the required check — **`nix flake check`** — passes;
+- the required checks — **`nix flake check`** and **`lake build`** — pass;
 - the repository owner (**@ojhermann**) has **approved** — requested
   automatically via [`CODEOWNERS`](.github/CODEOWNERS), so you needn't add them
   by hand;
