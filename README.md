@@ -118,6 +118,13 @@ natively readable by the agents meant to consume it.
 
 ---
 
+## The mechanics, in code
+
+The Lean library is documented module-by-module — with a dependency diagram, the
+seam, and the theorem chain — in **[docs/architecture.md](docs/architecture.md)**.
+
+---
+
 ## How this is meant to be used
 
 Pacioli is built for **agent–human collaboration**. The intended loop:
