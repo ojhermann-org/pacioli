@@ -16,8 +16,8 @@ concurrency:
 jobs:
   # The fast hooks: nixfmt, deadnix, statix, markdownlint, and whitespace/hygiene
   # — exactly the local pre-commit set, so CI == `nix flake check` (one source of
-  # truth). The full Lean compile (a `lake build` job) will return alongside the
-  # mechanics.
+  # truth). Deliberately kept separate from the Lean compile below: these are
+  # fast and hermetic, a full Mathlib build is neither.
   hooks:
     name: nix flake check
     runs-on: ubuntu-latest
@@ -28,3 +28,26 @@ jobs:
           extra_nix_config: |
             experimental-features = nix-command flakes
       - run: nix flake check -L
+
+  # The Lean proof gate: the full `lake build` plus the sorry check — the same
+  # `scripts/lean-check.sh` run locally, so CI and dev share one gate. This is
+  # the check the charter's rigour promise depends on (issue #37).
+  #
+  # `lean-action` installs the toolchain pinned in `lean-toolchain` (v4.32.0)
+  # and fetches Mathlib's prebuilt `.olean` cache (`lake exe cache get`), but
+  # runs no build of its own — the script owns the build + sorry gate, so there
+  # is exactly one build and one source of truth. The toolchain match is what
+  # makes the cache hit instead of compiling Mathlib from source (see
+  # `lakefile.toml`).
+  lean:
+    name: lake build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: false
+          test: false
+          use-mathlib-cache: true
+      - run: scripts/lean-check.sh
