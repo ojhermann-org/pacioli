@@ -147,28 +147,51 @@ Each lens reports findings ranked by severity. Triage them into **fix now** vs
 (`scripts/lean-check.sh`), and only then commit. Record the deferred findings as
 issues so nothing is silently dropped.
 
+These three lenses are the current set; **expand it as the work demands** — a
+performance lens, an OKF-interface lens, or whatever a future increment calls
+for.
+
 ---
 
 ## Contributing a change
 
 Everything lands through a **pull request** — no direct commits to `main`.
+Branch off `main`, make the change on **one side of the seam** (mechanics _or_
+judgment), and keep it **small and well-explained** — say _why_, not just
+_what_.
 
-1. **Branch** off `main`.
-2. Make the change on **one side of the seam** where it applies (mechanics _or_
-   judgment).
-3. Keep it **small and well-explained**; the commit message and PR should say
-   _why_, not just _what_.
-4. Ensure `nix flake check` is green locally.
-5. **Open a PR.** For it to become mergeable:
-   - the required check — **`nix flake check`** — passes;
-   - the repository owner (**@ojhermann**) has **approved** — they are
-     requested as a reviewer automatically (via
-     [`CODEOWNERS`](.github/CODEOWNERS)), so you needn't add them by hand;
-   - **every review conversation is resolved.**
-6. **Only the owner merges.** Approved, green PRs go through a **merge queue**:
-   the PR is re-tested against the latest `main` before it lands, so a merge can
-   never break `main`. Merges are **squash → delete branch**, keeping history
-   linear.
+### Before opening (or un-drafting) the PR
+
+- **Verify.** `scripts/lean-check.sh` is green and **sorry-free**; run
+  `#print axioms` on any new load-bearing theorem and confirm there are no
+  unexpected axioms.
+- **Lint and format.** `nix flake check` is green — `nixfmt`, `deadnix`,
+  `statix`, `markdownlint`, and whitespace/EOF hygiene. Format TOML with
+  `taplo`; there is no `.lean` autoformatter, so follow the Mathlib layout (the
+  100-column guide).
+- **Docs in step, invariants cited.** Update the affected docs (README status,
+  this guide, module/declaration docstrings) in the _same_ change, and cite any
+  new load-bearing invariant (see
+  [Development conventions](#development-conventions)).
+- **Critical review.** Run the [critical review](#critical-review) — the three
+  lenses (Lean idioms & proof robustness, accounting fidelity, charter & seam
+  alignment). Triage findings **fix now** vs **defer**, apply the fixes, and
+  file an issue for every deferred finding.
+
+### Landing it
+
+Open the PR as a **draft** while the increment is in progress; mark it ready once
+the checklist above is done. For it to become mergeable:
+
+- the required check — **`nix flake check`** — passes;
+- the repository owner (**@ojhermann**) has **approved** — requested
+  automatically via [`CODEOWNERS`](.github/CODEOWNERS), so you needn't add them
+  by hand;
+- **every review conversation is resolved** — no open comments.
+
+**Only the owner merges.** Approved, green PRs go through a **merge queue**: the
+PR is re-tested against the latest `main` before it lands, so a merge can never
+break `main`. Merges are **squash → delete branch**, keeping history linear.
 
 ---
 
