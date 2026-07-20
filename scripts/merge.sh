@@ -70,11 +70,22 @@ else
     || echo "  (branch already gone)"
 fi
 
-# Fast-forward local main and prune stale tracking refs (the `git up` rhythm).
+# Fast-forward the default branch and prune stale tracking refs (the `git up`
+# rhythm). Switch to the default branch *first*: the caller is usually still on
+# the just-merged head branch, whose upstream is now gone and which a squash
+# merge leaves non-fast-forwardable — so ff'ing the current branch is wrong.
 echo "syncing local repo"
+DEFAULT="$(gh repo view --json defaultBranchRef --jq .defaultBranchRef.name)"
 git remote update -p >/dev/null 2>&1 || true
-if git rev-parse --abbrev-ref --symbolic-full-name '@{u}' >/dev/null 2>&1; then
-  git merge --ff-only '@{u}' >/dev/null 2>&1 \
-    || echo "  (local branch not fast-forwardable — check out main and run 'git up')"
+if [ -n "$DEFAULT" ]; then
+  git checkout "$DEFAULT" >/dev/null 2>&1 || echo "  (couldn't switch to '$DEFAULT')"
+  git merge --ff-only "origin/$DEFAULT" >/dev/null 2>&1 \
+    || echo "  (local '$DEFAULT' not fast-forwardable — resolve by hand)"
+fi
+# Drop the merged local head branch if it lingers (squash leaves it non-ff, so
+# -D; the PR is confirmed merged and the remote branch is already deleted).
+if [ "$CROSS" != "true" ] && [ -n "$BRANCH" ] && [ "$BRANCH" != "$DEFAULT" ] \
+   && git show-ref --verify --quiet "refs/heads/$BRANCH"; then
+  git branch -D "$BRANCH" >/dev/null 2>&1 && echo "deleted local branch '$BRANCH'"
 fi
 echo "done."
