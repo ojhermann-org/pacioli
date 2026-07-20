@@ -9,10 +9,12 @@
 # with the merge queue + required review — so this script wraps that, then
 # deletes the head branch and fast-forwards local main.
 #
-# Owner-run only: it bypasses the required owner review, so it is for merging
-# YOUR OWN PRs (which you can't self-approve). External contributions go through
-# the normal gate (your review -> queue). The auto-mode classifier blocks an
-# agent from running this to self-merge, exactly as it blocks --admin.
+# It bypasses the required owner review, so it is for merging owner-authored PRs
+# (which can't be self-approved). External contributions go through the normal
+# gate (owner review -> queue). The auto-mode classifier blocks an *unsolicited*
+# agent self-merge, exactly as it blocks --admin — but the agent MAY run this
+# when the owner explicitly asks it to merge a specific PR (standing grant in
+# ~/.claude/CLAUDE.md, Pull-requests -> the pacioli carve-out).
 #
 # By default it refuses unless the PR's required checks are all green; pass
 # --force to override (e.g. a docs-only emergency). Bypassing CI is the one
