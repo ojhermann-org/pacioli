@@ -33,6 +33,14 @@ credit) is an authoring-layer concern kept out of this substrate — see issue
 
 `entries` is a `List`; entry order carries no accounting meaning (order-
 irrelevant `Multiset` follow-up: issue #32).
+
+An entry belongs to a transaction by **membership in `entries`** — the
+association is containment, not a foreign key. The core deliberately carries no
+entry/transaction IDs and no `transactionId` reference: an id reads in no
+mechanical law, and a key would reintroduce the dangling/mismatched states that
+containment rules out by construction (the same "illegal states unrepresentable"
+discipline as the bundled `balanced` proof). Identity and persistence are
+downstream — see issue #45.
 -/
 
 namespace Pacioli

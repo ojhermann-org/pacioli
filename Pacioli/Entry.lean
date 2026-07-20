@@ -64,6 +64,12 @@ caller's data, not the kernel's, so none of that policy leaks into the types.
 rates to entries, period boundaries) ask for that structure at the point of use,
 just as aggregation asks for `DecidableEq` / an additive monoid where it needs
 them.
+
+An `Entry` deliberately carries **no identifier / surrogate key**. An id reads in
+no mechanical law — balance, aggregation, and classification never reference one
+— so identity is a downstream/persistence concern, not core data. (Duplicates are
+distinguished by multiplicity in the containing `List`/`Multiset`, not by id.)
+See issue #45.
 -/
 
 /-- A single accounting entry: posts `value`, in currency `currency`, to
